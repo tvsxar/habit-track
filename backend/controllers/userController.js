@@ -1,6 +1,6 @@
-import User from "../models/userModel";
+import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
-import generateToken from "../utils/generateToken";
+import generateToken from "../utils/generateToken.js";
 
 // Register User
 async function registerUser(req, res) {
@@ -115,9 +115,4 @@ async function getMe(req, res) {
   res.json({ user });
 }
 
-module.exports = {
-  registerUser,
-  loginUser,
-  logoutUser,
-  getMe,
-};
+export { registerUser, loginUser, logoutUser, getMe };

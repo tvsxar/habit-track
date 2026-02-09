@@ -1,11 +1,12 @@
 import express from "express";
-const router = express.Router();
+import protect from '../middlewares/protect.js';
 import {
   registerUser,
   loginUser,
   logoutUser,
   getMe,
-} from "../controllers/userController";
+} from "../controllers/userController.js";
+const router = express.Router(); 
 
 // Register
 router.post("/register", registerUser);
@@ -17,6 +18,6 @@ router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 
 // Me (check token for authorized routes)
-router.get("/me", getMe);
+router.get("/me", protect, getMe);
 
-module.exports = router;
+export default router;
