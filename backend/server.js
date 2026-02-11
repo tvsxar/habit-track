@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import habitRoutes from "./routes/habitRoutes.js";
+import logRoutes from "./routes/logRoutes.js";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 // Connect routes with routers
 app.use("/api/auth", userRoutes);
 app.use("/api", habitRoutes);
+app.use("/api/logs", logRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend HabitTrack works!");
