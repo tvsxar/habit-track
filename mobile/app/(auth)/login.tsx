@@ -1,9 +1,12 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
-
-const ACCENT = "#2f95dc";
+import { useTheme } from '../../hooks/useTheme';
+import { createLoginStyles } from '../../styles/loginStyles';
 
 export default function Login() {
+    const { theme } = useTheme();
+    const styles = createLoginStyles(theme);
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Welcome Back 👋</Text>
@@ -33,42 +36,3 @@ export default function Login() {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        paddingHorizontal: 24,
-        backgroundColor: "#f5f6fa",
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: "700",
-        marginBottom: 40,
-        textAlign: "center",
-    },
-    input: {
-        backgroundColor: "#fff",
-        padding: 16,
-        borderRadius: 14,
-        marginBottom: 16,
-        fontSize: 16,
-    },
-    button: {
-        backgroundColor: ACCENT,
-        paddingVertical: 16,
-        borderRadius: 16,
-        alignItems: "center",
-        marginTop: 10,
-    },
-    buttonText: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "600",
-    },
-    link: {
-        marginTop: 20,
-        textAlign: "center",
-        color: ACCENT,
-    },
-});
