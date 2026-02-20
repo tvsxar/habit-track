@@ -7,10 +7,13 @@ import {
     TouchableOpacity,
 } from "react-native";
 import EmojiSelector from "../../components/EmojiSelector";
-
-const ACCENT = "#2f95dc";
+import { useTheme } from "../../hooks/useTheme";
+import { createAddHabitStyles } from "../../styles/addStyles";
 
 export default function AddHabit() {
+    const { theme, isDark } = useTheme();
+    const styles = createAddHabitStyles(theme);
+
     const [selectedEmoji, setSelectedEmoji] = useState("💧");
 
     return (
@@ -38,41 +41,3 @@ export default function AddHabit() {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingHorizontal: 20,
-        paddingTop: 60,
-        backgroundColor: "#f5f6fa",
-        paddingBottom: 25,
-    },
-    header: {
-        fontSize: 26,
-        fontWeight: "700",
-        marginBottom: 30,
-    },
-    label: {
-        fontSize: 14,
-        marginBottom: 8,
-        color: "#666",
-    },
-    input: {
-        backgroundColor: "#fff",
-        padding: 14,
-        borderRadius: 14,
-        marginBottom: 25,
-        fontSize: 16,
-    },
-    button: {
-        backgroundColor: ACCENT,
-        paddingVertical: 16,
-        borderRadius: 16,
-        alignItems: "center",
-    },
-    buttonText: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "600",
-    },
-});
