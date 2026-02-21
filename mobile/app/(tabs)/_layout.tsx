@@ -1,28 +1,20 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { View, Platform } from "react-native";
+import { useTheme } from "../../hooks/useTheme";
+import { createTabLayoutStyles } from "../../styles/tabsLayoutStyles";
 
 export default function TabLayout() {
-    const isDark = false;
+    const { theme } = useTheme();
+    const styles = createTabLayoutStyles(theme);
 
     return (
         <Tabs
             screenOptions={{
                 headerShown: false,
-                tabBarActiveTintColor: "#2f95dc",
-                tabBarInactiveTintColor: isDark ? "#aaa" : "gray",
-                tabBarStyle: {
-                    height: 80,
-                    paddingBottom: 5,
-                    paddingTop: 10,
-                    backgroundColor: isDark ? "#1c1c1e" : "#fff",
-                    borderTopWidth: 0,
-                    shadowColor: "#000",
-                    shadowOpacity: isDark ? 0.4 : 0.08,
-                    shadowOffset: { width: 0, height: -3 },
-                    shadowRadius: 6,
-                    elevation: 10,
-                },
+                tabBarActiveTintColor: styles.activeTint.color,
+                tabBarInactiveTintColor: styles.inactiveTint.color,
+                tabBarStyle: styles.tabBar,
             }}
         >
             <Tabs.Screen
@@ -30,7 +22,11 @@ export default function TabLayout() {
                 options={{
                     title: "Habits",
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="calendar-outline" color={color} size={size + 2} />
+                        <Ionicons
+                            name="calendar-outline"
+                            color={color}
+                            size={size + 2}
+                        />
                     ),
                 }}
             />
@@ -40,22 +36,7 @@ export default function TabLayout() {
                 options={{
                     title: "",
                     tabBarIcon: () => (
-                        <View
-                            style={{
-                                width: 70,
-                                height: 70,
-                                backgroundColor: "#2f95dc",
-                                borderRadius: 50,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                marginBottom: Platform.OS === "ios" ? 20 : 30,
-                                shadowColor: "#000",
-                                shadowOffset: { width: 0, height: 4 },
-                                shadowOpacity: 0.3,
-                                shadowRadius: 4.65,
-                                elevation: 8,
-                            }}
-                        >
+                        <View style={styles.addButton}>
                             <Ionicons name="add" color="white" size={40} />
                         </View>
                     ),
@@ -67,7 +48,11 @@ export default function TabLayout() {
                 options={{
                     title: "Profile",
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="person-outline" color={color} size={size + 2} />
+                        <Ionicons
+                            name="person-outline"
+                            color={color}
+                            size={size + 2}
+                        />
                     ),
                 }}
             />

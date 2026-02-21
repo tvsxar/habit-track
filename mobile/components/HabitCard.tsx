@@ -1,4 +1,6 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
+import { useTheme } from "../hooks/useTheme";
+import { createHabitCardStyles } from "../styles/habitCardStyles";
 
 interface HabitCardProps {
     title: string;
@@ -7,6 +9,9 @@ interface HabitCardProps {
 }
 
 export default function HabitCard({ title, streak, icon }: HabitCardProps) {
+    const { theme } = useTheme();
+    const styles = createHabitCardStyles(theme);
+
     return (
         <View style={styles.card}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -19,37 +24,3 @@ export default function HabitCard({ title, streak, icon }: HabitCardProps) {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    icon: {
-        fontSize: 26,
-        marginRight: 14,
-    },
-    card: {
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 16,
-        backgroundColor: "#fff",
-        borderRadius: 12,
-        marginBottom: 12,
-        shadowColor: "#000",
-        shadowOpacity: 0.05,
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 4,
-        elevation: 2,
-    },
-    title: {
-        fontSize: 16,
-        fontWeight: "600",
-    },
-    subtitle: {
-        marginTop: 6,
-        color: "#666",
-    },
-    statusDot: {
-        width: 14,
-        height: 14,
-        borderRadius: 7,
-        backgroundColor: "#2f95dc",
-    },
-});
