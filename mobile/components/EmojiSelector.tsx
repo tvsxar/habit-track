@@ -1,4 +1,7 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { useTheme } from "../hooks/useTheme";
+import { createEmojiSelectorStyles } from "../styles/emojiSelectorStyles";
+
 
 interface EmojiSelectorProps {
     selected: string;
@@ -15,6 +18,9 @@ const emojiOptions = [
 ];
 
 export default function EmojiSelector({ selected, onSelect }: EmojiSelectorProps) {
+    const { theme } = useTheme();
+    const styles = createEmojiSelectorStyles(theme);
+
     return (
         <ScrollView
             horizontal
@@ -40,25 +46,3 @@ export default function EmojiSelector({ selected, onSelect }: EmojiSelectorProps
         </ScrollView>
     );
 }
-
-const styles = StyleSheet.create({
-    scroll: {
-        marginBottom: 40,
-    },
-    emojiContainer: {
-        width: 55,
-        height: 55,
-        borderRadius: 16,
-        justifyContent: "center",
-        alignItems: "center",
-        marginRight: 12,
-        backgroundColor: "#fff",
-    },
-    selectedEmoji: {
-        borderWidth: 2,
-        borderColor: ACCENT,
-    },
-    emoji: {
-        fontSize: 26,
-    },
-});

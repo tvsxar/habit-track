@@ -1,5 +1,8 @@
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import HabitCard from "../../components/HabitCard";
+import { useTheme } from "../../hooks/useTheme";
+import { createHabitsStyles } from "../../styles/habitsStyles";
+
 
 const mockHabits = [
   { id: "1", title: "Drink Water", streak: 5, icon: "💧" },
@@ -8,6 +11,9 @@ const mockHabits = [
 ];
 
 export default function Habits() {
+  const { theme } = useTheme();
+  const styles = createHabitsStyles(theme);
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>My Habits</Text>
