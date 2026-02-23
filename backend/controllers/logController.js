@@ -1,6 +1,15 @@
 import Log from "../models/logModel.js";
 import Habit from "../models/habitModel.js";
 
+const getAllLogs = async (req, res) => {
+  try {
+    const logs = await Log.find({ userId: req.user._id });
+    res.status(200).json({ logs });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching logs" });
+  }
+};
+
 const getLogsByHabit = async (req, res) => {
   try {
     const { habitId } = req.params;
@@ -91,4 +100,4 @@ const deleteLog = async (req, res) => {
   }
 };
 
-export { getLogsByHabit, addLog, updateLog, deleteLog };
+export { getLogsByHabit, addLog, updateLog, deleteLog, getAllLogs };
