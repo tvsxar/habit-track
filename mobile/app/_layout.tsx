@@ -1,7 +1,11 @@
 import { Stack } from "expo-router";
+import { HabitProvider } from '../hooks/useHabits';
 
 export default function RootLayout() {
-  return <Stack screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="(tabs)" />
-  </Stack>;
+  return (
+    <HabitProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
+      </Stack>
+    </HabitProvider>);
 }
