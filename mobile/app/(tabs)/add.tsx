@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
     View,
     Text,
-    StyleSheet,
     TextInput,
     TouchableOpacity,
 } from "react-native";
@@ -11,7 +10,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { createAddHabitStyles } from "../../styles/addStyles";
 
 export default function AddHabit() {
-    const { theme, isDark } = useTheme();
+    const { theme } = useTheme();
     const styles = createAddHabitStyles(theme);
 
     const [selectedEmoji, setSelectedEmoji] = useState("💧");

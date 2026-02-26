@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { View, Platform } from "react-native";
+import { View } from "react-native";
 import { useTheme } from "../../hooks/useTheme";
 import { createTabLayoutStyles } from "../../styles/tabsLayoutStyles";
 

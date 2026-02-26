@@ -8,7 +8,7 @@ function RootStack() {
   const { user, loading } = useAuth();
   const { theme } = useTheme();
 
-  if (loading) return <LoadingScreen theme={theme} />;
+  if (loading) return <LoadingScreen />;
 
   return (
     <Stack screenOptions={{ headerShown: false }}>

@@ -1,11 +1,9 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { useTheme } from '../../hooks/useTheme';
 import { createRegisterStyles } from '../../styles/registerStyles';
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
-
-const ACCENT = "#2f95dc";
 
 export default function Register() {
   const { theme } = useTheme();
