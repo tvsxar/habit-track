@@ -2,13 +2,13 @@ import { Stack } from "expo-router";
 import { HabitProvider } from '../hooks/useHabits';
 import { AuthProvider, useAuth } from '../hooks/useAuth';
 import LoadingScreen from "@/components/LoadingScreen";
-import { useTheme } from "@/hooks/useTheme";
+import { ThemeProvider, useTheme } from "../hooks/useTheme";
 
 function RootStack() {
   const { user, loading } = useAuth();
   const { theme } = useTheme();
 
-  if (loading) return <LoadingScreen theme={theme} />;
+  if (loading) return <LoadingScreen />;
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -24,9 +24,11 @@ function RootStack() {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <HabitProvider>
-        <RootStack />
-      </HabitProvider>
+      <ThemeProvider>
+        <HabitProvider>
+          <RootStack />
+        </HabitProvider>
+      </ThemeProvider>
     </AuthProvider>
   );
 }
