@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   View,
   Text,
@@ -7,16 +6,24 @@ import {
 } from "react-native";
 import { useTheme } from "../../hooks/useTheme";
 import { createProfileStyles } from "../../styles/profileStyles";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "expo-router";
 
 export default function Profile() {
-  const { theme } = useTheme();
+  const { theme, toggleTheme, isDark } = useTheme();
   const styles = createProfileStyles(theme);
+  const { logout, user } = useAuth();
+  const router = useRouter();
 
-  const [isDark, setIsDark] = useState(theme === "dark");
+  const handleLogout = async () => {
+    await logout();
+    router.replace("/(auth)")
+  };
+
 
   return (
     <View style={styles.container}>
-      <Text style={styles.name}>John Doe</Text>
+      <Text style={styles.name}>{user?.username}</Text>
 
       <View style={styles.statsContainer}>
         <View style={styles.statCard}>
@@ -34,12 +41,12 @@ export default function Profile() {
         <Text style={styles.themeLabel}>Dark Mode</Text>
         <Switch
           value={isDark}
-          onValueChange={setIsDark}
+          onValueChange={toggleTheme}
           trackColor={{ true: "#2f95dc" }}
         />
       </View>
 
-      <TouchableOpacity style={styles.logoutButton}>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>Log Out</Text>
       </TouchableOpacity>
     </View>
