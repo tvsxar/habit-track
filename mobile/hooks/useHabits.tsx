@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
 
 export interface Habit {
     _id: string;
@@ -22,9 +22,13 @@ export interface HabitLog {
     updatedAt: string;
 }
 
+export interface HabitWithMeta extends Habit {
+    streak: number;
+    completedToday: boolean;
+}
+
 interface HabitContextType {
-    habits: Habit[];
-    logs: HabitLog[];
+    habits: HabitWithMeta[];
     loading: boolean;
 
     fetchHabits: () => Promise<void>;
@@ -141,11 +145,24 @@ export function HabitProvider({
         loadData();
     }, []);
 
+    const habitsWithMeta: HabitWithMeta[] = useMemo(() => {
+        if (!habits) return [];
+
+        return habits.map(habit => {
+            const habitLogs = logs.filter(log => log.habitId === habit._id);
+
+            return {
+                ...habit,
+                streak: calculateStreak(habitLogs),
+                completedToday: checkCompletedToday(habitLogs)
+            }
+        })
+    }, [habits, logs, loading])
+
     return (
         <HabitContext.Provider
             value={{
-                habits,
-                logs,
+                habits: habitsWithMeta,
                 loading,
                 fetchHabits,
                 createHabit,
@@ -165,4 +182,33 @@ export function useHabits() {
         throw new Error("useHabits must be used inside HabitProvider");
     }
     return context;
+}
+
+function calculateStreak(logs: HabitLog[]) {
+    if (logs.length === 0) return 0;
+
+    const sortedLogs = [...logs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    let streak = 0;
+    let currentDate = new Date();
+
+    for (const log of sortedLogs) {
+        const logDate = new Date(log.date);
+
+        if (log.status !== "completed") break;
+
+        if (logDate.toDateString() === currentDate.toDateString()) {
+            streak += 1;
+            currentDate.setDate(currentDate.getDate() - 1);
+        } else {
+            break;
+        }
+    }
+
+    return streak;
+}
+
+function checkCompletedToday(logs: HabitLog[]) {
+    const today = new Date().toDateString();
+
+    return logs.some(log => log.status === 'completed' && new Date(log.date).toDateString() === today)
 }
