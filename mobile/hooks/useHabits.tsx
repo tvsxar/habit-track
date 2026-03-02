@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
+import { useAuth } from "./useAuth";
 
 export interface Habit {
     _id: string;
@@ -53,11 +54,26 @@ export function HabitProvider({
     const [logs, setLogs] = useState<HabitLog[]>([]);
     const [loading, setLoading] = useState(false);
 
-    const API_URL = process.env.EXPO_PUBLIC__API_URL;
+    const { token } = useAuth();
+
+    const authHeaders = () => {
+        if (!token) {
+            throw new Error("No auth token");
+        }
+
+        return {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        };
+    };
+
+    const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
     const fetchHabits = async () => {
         try {
-            const res = await fetch(`${API_URL}/habits`);
+            const res = await fetch(`${API_URL}/habits`, {
+                headers: authHeaders(),
+            });
             if (!res.ok) throw new Error("Failed to fetch habits");
 
             const data = await res.json();
@@ -69,7 +85,9 @@ export function HabitProvider({
 
     const fetchAllLogs = async () => {
         try {
-            const res = await fetch(`${API_URL}/logs`);
+            const res = await fetch(`${API_URL}/logs`, {
+                headers: authHeaders(),
+            });
             if (!res.ok) throw new Error("Failed to fetch all logs");
 
             const data = await res.json();
@@ -83,7 +101,7 @@ export function HabitProvider({
         try {
             const res = await fetch(`${API_URL}/habits`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: authHeaders(),
                 body: JSON.stringify({ title, emoji }),
             });
             if (!res.ok) throw new Error("Failed to create habit");
@@ -97,7 +115,7 @@ export function HabitProvider({
 
     const deleteHabit = async (id: string) => {
         try {
-            const res = await fetch(`${API_URL}/habits/${id}`, { method: 'DELETE' });
+            const res = await fetch(`${API_URL}/habits/${id}`, { method: 'DELETE', headers: authHeaders(), });
             if (!res.ok) throw new Error("Failed to delete habit");
 
             setHabits((prev) => prev.filter(habit => habit._id !== id));
@@ -115,7 +133,7 @@ export function HabitProvider({
         try {
             const res = await fetch(`${API_URL}/logs/${habitId}`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: authHeaders(),
                 body: JSON.stringify({ status, date }),
             });
 
@@ -130,6 +148,8 @@ export function HabitProvider({
     };
 
     useEffect(() => {
+        if (!token) return;
+
         const loadData = async () => {
             setLoading(true);
             try {
@@ -143,7 +163,7 @@ export function HabitProvider({
         };
 
         loadData();
-    }, []);
+    }, [token]);
 
     const habitsWithMeta: HabitWithMeta[] = useMemo(() => {
         if (!habits) return [];
