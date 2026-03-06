@@ -24,9 +24,11 @@ export default function Habits() {
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <HabitCard
+            id={item._id}
             title={item.title}
             streak={item.streak}
             icon={item.emoji}
+            loggedToday={item.loggedToday}
           />
         )}
         showsVerticalScrollIndicator={false}

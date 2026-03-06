@@ -25,7 +25,7 @@ export interface HabitLog {
 
 export interface HabitWithMeta extends Habit {
     streak: number;
-    completedToday: boolean;
+    loggedToday: boolean;
 }
 
 interface HabitContextType {
@@ -174,10 +174,10 @@ export function HabitProvider({
             return {
                 ...habit,
                 streak: calculateStreak(habitLogs),
-                completedToday: checkCompletedToday(habitLogs)
+                loggedToday: checkLoggedToday(habitLogs)
             }
         })
-    }, [habits, logs, loading])
+    }, [habits, logs])
 
     return (
         <HabitContext.Provider
@@ -205,21 +205,23 @@ export function useHabits() {
 }
 
 function calculateStreak(logs: HabitLog[]) {
-    if (logs.length === 0) return 0;
-
-    const sortedLogs = [...logs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     let streak = 0;
-    let currentDate = new Date();
+
+    const sortedLogs = [...logs].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
 
     for (const log of sortedLogs) {
-        const logDate = new Date(log.date);
+        if (log.status === "completed") {
+            streak++;
+            continue;
+        }
 
-        if (log.status !== "completed") break;
+        if (log.status === "skipped") {
+            continue;
+        }
 
-        if (logDate.toDateString() === currentDate.toDateString()) {
-            streak += 1;
-            currentDate.setDate(currentDate.getDate() - 1);
-        } else {
+        if (log.status === "missed") {
             break;
         }
     }
@@ -227,8 +229,10 @@ function calculateStreak(logs: HabitLog[]) {
     return streak;
 }
 
-function checkCompletedToday(logs: HabitLog[]) {
+function checkLoggedToday(logs: HabitLog[]) {
     const today = new Date().toDateString();
 
-    return logs.some(log => log.status === 'completed' && new Date(log.date).toDateString() === today)
+    return logs.some(
+        log => new Date(log.date).toDateString() === today
+    );
 }
