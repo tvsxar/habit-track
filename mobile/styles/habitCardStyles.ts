@@ -1,7 +1,5 @@
 import { StyleSheet } from "react-native";
 
-const ACCENT = "#2f95dc";
-
 export function createHabitCardStyles(theme: "light" | "dark") {
   const isDark = theme === "dark";
 
@@ -9,34 +7,60 @@ export function createHabitCardStyles(theme: "light" | "dark") {
     card: {
       flexDirection: "row",
       alignItems: "center",
+      justifyContent: "space-between",
       padding: 16,
       backgroundColor: isDark ? "#1e1e1e" : "#fff",
       borderRadius: 12,
       marginBottom: 12,
       shadowColor: "#000",
-      shadowOpacity: 0.05,
+      shadowOpacity: 0.1,
       shadowOffset: { width: 0, height: 2 },
-      shadowRadius: 4,
-      elevation: 2,
+      shadowRadius: 6,
+      elevation: 3,
+    },
+    left: {
+      flexDirection: "row",
+      alignItems: "center",
     },
     icon: {
-      fontSize: 26,
-      marginRight: 14,
+      fontSize: 32,
+      marginRight: 16,
     },
     title: {
-      fontSize: 16,
-      fontWeight: "600",
-      color: isDark ? "#fff" : "#000",
+      fontSize: 18,
+      fontWeight: "700",
+      color: isDark ? "#fff" : "#111",
     },
     subtitle: {
-      marginTop: 6,
+      marginTop: 4,
+      fontSize: 14,
       color: isDark ? "#aaa" : "#666",
     },
-    statusDot: {
-      width: 14,
-      height: 14,
-      borderRadius: 7,
-      backgroundColor: ACCENT,
+    actions: {
+      flexDirection: "column",
+      gap: 8,
+      alignItems: "flex-end",
+    },
+    completeButton: {
+      backgroundColor: "#4CAF50",
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      borderRadius: 10,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    skipButton: {
+      backgroundColor: "#888",
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      borderRadius: 10,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    buttonText: {
+      color: "white",
+      fontWeight: "700",
+      fontSize: 16,
     },
   });
 }

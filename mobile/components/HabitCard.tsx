@@ -1,7 +1,8 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { useTheme } from "../hooks/useTheme";
 import { createHabitCardStyles } from "../styles/habitCardStyles";
 import { useHabits } from "@/hooks/useHabits";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface HabitCardProps {
     id: string;
@@ -23,28 +24,38 @@ export default function HabitCard({ id, title, streak, icon, loggedToday }: Habi
 
     return (
         <View style={styles.card}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View style={styles.left}>
                 <Text style={styles.icon}>{icon}</Text>
                 <View>
                     <Text style={styles.title}>{title}</Text>
                     <Text style={styles.subtitle}>🔥 {streak} day streak</Text>
-
-                    <View style={{ flexDirection: "row", marginTop: 8 }}>
-                        <Text
-                            onPress={() => handleLog("completed")}
-                            style={{ marginRight: 12, opacity: loggedToday ? 0.5 : 1 }}
-                        >
-                            ✅
-                        </Text>
-
-                        <Text
-                            onPress={() => handleLog("skipped")}
-                            style={{ opacity: loggedToday ? 0.5 : 1 }}
-                        >
-                            ⏭
-                        </Text>
-                    </View>
                 </View>
+            </View>
+
+            <View style={styles.actions}>
+                <TouchableOpacity
+                    style={styles.completeButton}
+                    onPress={() => handleLog("completed")}
+                    disabled={loggedToday}
+                >
+                    <MaterialCommunityIcons
+                        name="check"
+                        size={26}
+                        color="#fff"
+                    />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.skipButton}
+                    onPress={() => handleLog("skipped")}
+                    disabled={loggedToday}
+                >
+                    <MaterialCommunityIcons
+                        name="skip-next"
+                        size={26}
+                        color="#fff"
+                    />
+                </TouchableOpacity>
             </View>
         </View>
     );
