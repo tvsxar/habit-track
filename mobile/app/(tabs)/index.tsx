@@ -1,31 +1,34 @@
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import HabitCard from "../../components/HabitCard";
 import { useTheme } from "../../hooks/useTheme";
 import { createHabitsStyles } from "../../styles/habitsStyles";
-
-
-const mockHabits = [
-  { id: "1", title: "Drink Water", streak: 5, icon: "💧" },
-  { id: "2", title: "Workout", streak: 12, icon: "💪" },
-  { id: "3", title: "Read 10 Pages", streak: 3, icon: "📚" },
-];
+import { useHabits } from "@/hooks/useHabits";
+import LoadingScreen from "@/components/LoadingScreen";
+import EmptyStateScreen from "@/components/EmptyStateScreen";
 
 export default function Habits() {
+  const { habits, loading } = useHabits();
   const { theme } = useTheme();
   const styles = createHabitsStyles(theme);
+
+  if (loading) return <LoadingScreen />
+
+  if (habits.length === 0) return <EmptyStateScreen message="No habits yet!" />;
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>My Habits</Text>
 
       <FlatList
-        data={mockHabits}
-        keyExtractor={(item) => item.id}
+        data={habits}
+        keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <HabitCard
+            id={item._id}
             title={item.title}
             streak={item.streak}
-            icon={item.icon}
+            icon={item.emoji}
+            loggedToday={item.loggedToday}
           />
         )}
         showsVerticalScrollIndicator={false}
@@ -33,17 +36,3 @@ export default function Habits() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    backgroundColor: "#f5f6fa",
-  },
-  header: {
-    fontSize: 26,
-    fontWeight: "700",
-    marginBottom: 20,
-  },
-});

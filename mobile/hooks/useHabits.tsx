@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
+import { useAuth } from "./useAuth";
 
 export interface Habit {
     _id: string;
@@ -22,9 +23,13 @@ export interface HabitLog {
     updatedAt: string;
 }
 
+export interface HabitWithMeta extends Habit {
+    streak: number;
+    loggedToday: boolean;
+}
+
 interface HabitContextType {
-    habits: Habit[];
-    logs: HabitLog[];
+    habits: HabitWithMeta[];
     loading: boolean;
 
     fetchHabits: () => Promise<void>;
@@ -49,11 +54,26 @@ export function HabitProvider({
     const [logs, setLogs] = useState<HabitLog[]>([]);
     const [loading, setLoading] = useState(false);
 
-    const API_URL = process.env.EXPO_PUBLIC__API_URL;
+    const { token } = useAuth();
+
+    const authHeaders = () => {
+        if (!token) {
+            throw new Error("No auth token");
+        }
+
+        return {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        };
+    };
+
+    const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
     const fetchHabits = async () => {
         try {
-            const res = await fetch(`${API_URL}/habits`);
+            const res = await fetch(`${API_URL}/habits`, {
+                headers: authHeaders(),
+            });
             if (!res.ok) throw new Error("Failed to fetch habits");
 
             const data = await res.json();
@@ -65,7 +85,9 @@ export function HabitProvider({
 
     const fetchAllLogs = async () => {
         try {
-            const res = await fetch(`${API_URL}/logs`);
+            const res = await fetch(`${API_URL}/logs`, {
+                headers: authHeaders(),
+            });
             if (!res.ok) throw new Error("Failed to fetch all logs");
 
             const data = await res.json();
@@ -79,7 +101,7 @@ export function HabitProvider({
         try {
             const res = await fetch(`${API_URL}/habits`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: authHeaders(),
                 body: JSON.stringify({ title, emoji }),
             });
             if (!res.ok) throw new Error("Failed to create habit");
@@ -93,7 +115,7 @@ export function HabitProvider({
 
     const deleteHabit = async (id: string) => {
         try {
-            const res = await fetch(`${API_URL}/habits/${id}`, { method: 'DELETE' });
+            const res = await fetch(`${API_URL}/habits/${id}`, { method: 'DELETE', headers: authHeaders(), });
             if (!res.ok) throw new Error("Failed to delete habit");
 
             setHabits((prev) => prev.filter(habit => habit._id !== id));
@@ -111,7 +133,7 @@ export function HabitProvider({
         try {
             const res = await fetch(`${API_URL}/logs/${habitId}`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: authHeaders(),
                 body: JSON.stringify({ status, date }),
             });
 
@@ -126,6 +148,8 @@ export function HabitProvider({
     };
 
     useEffect(() => {
+        if (!token) return;
+
         const loadData = async () => {
             setLoading(true);
             try {
@@ -139,13 +163,26 @@ export function HabitProvider({
         };
 
         loadData();
-    }, []);
+    }, [token]);
+
+    const habitsWithMeta: HabitWithMeta[] = useMemo(() => {
+        if (!habits) return [];
+
+        return habits.map(habit => {
+            const habitLogs = logs.filter(log => log.habitId === habit._id);
+
+            return {
+                ...habit,
+                streak: calculateStreak(habitLogs),
+                loggedToday: checkLoggedToday(habitLogs)
+            }
+        })
+    }, [habits, logs])
 
     return (
         <HabitContext.Provider
             value={{
-                habits,
-                logs,
+                habits: habitsWithMeta,
                 loading,
                 fetchHabits,
                 createHabit,
@@ -165,4 +202,37 @@ export function useHabits() {
         throw new Error("useHabits must be used inside HabitProvider");
     }
     return context;
+}
+
+function calculateStreak(logs: HabitLog[]) {
+    let streak = 0;
+
+    const sortedLogs = [...logs].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+
+    for (const log of sortedLogs) {
+        if (log.status === "completed") {
+            streak++;
+            continue;
+        }
+
+        if (log.status === "skipped") {
+            continue;
+        }
+
+        if (log.status === "missed") {
+            break;
+        }
+    }
+
+    return streak;
+}
+
+function checkLoggedToday(logs: HabitLog[]) {
+    const today = new Date().toDateString();
+
+    return logs.some(
+        log => new Date(log.date).toDateString() === today
+    );
 }
